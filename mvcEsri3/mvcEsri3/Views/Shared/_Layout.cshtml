@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>@ViewBag.Title</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/soria/soria.css">
+
+
+    <script src="~/Scripts/jquery-2.2.3.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+
+    <script src="https://js.arcgis.com/3.16/"></script>
+
+
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+
+    <script>
+        require([
+            "esri/map",
+            "esri/layers/ArcGISDynamicMapServiceLayer",
+            'esri/layers/WMSLayer',
+            'esri/layers/WMSLayerInfo',
+            'esri/geometry/Extent',
+            'dojo/_base/array',
+            'dojo/dom',
+            'dojo/dom-construct',
+            'dojo/parser',
+            'dijit/layout/BorderContainer',
+            'dijit/layout/ContentPane',
+            'dojo/domReady!'
+
+
+        ], function (
+        Map,
+        ArcGISDynamicMapServiceLayer,
+        parser,
+        ready,
+        BorderContainer,
+        ContentPane,
+        dom,
+        urlUtils,
+        arcgisUtils,
+        Legend,
+        Scalebar) {
+            var map;
+            var snv = "http://10.100.10.224:6080/arcgis/rest/services/DNIT_Geo/SNV/MapServer";
+            var camada = new ArcGISDynamicMapServiceLayer(snv, { id: 'snv', visible: true });
+            // code to create the map and add a basemap will go here
+            map = new Map("mapDiv", {
+                center: [-46, -16],
+                zoom: 3,
+                basemap: "topo",
+            });
+            map.addLayer(camada)
+
+
+        });
+
+    </script>
+
+
+
+</head>
+<body>
+    <script src="~/Scripts/sidebar_menu.js" type="text/javascript" defer async> </script>
+    <div id="barra-brasil">
+        <a href="http://brasil.gov.br" style="background:#7F7F7F; height: 20px; padding:4px 0 4px 10px; display: block; font-family:sans,sans-serif; text-decoration:none; color:white; ">Portal do Governo Brasileiro</a>
+    </div>
+    <script src="http://barra.brasil.gov.br/barra.js" type="text/javascript" defer async></script>
+
+
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("DNIT", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
+                        <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <p></p>*@
+
+    <nav class="navbar navbar-default no-margin" style="background:#9ED1F7;border:1px solid black;top:2px">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header fixed-brand">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" id="menu-toggle">
+                <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+            </button>
+            <a class="navbar-brand" href="#"><i class="fa fa-rocket fa-4"></i> <img src="~/Content/img/DNIT (122x32).png" /></a>
+        </div>
+
+
+        <!-- navbar-header-->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2">
+                        <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+                    </button>
+                </li>
+            </ul>
+        </div><!-- bs-example-navbar-collapse-1 -->
+    </nav>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+                <li class="active">
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-dashboard fa-stack-1x "></i></span> Dashboard</a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none;">
+                        <li><a href="#">link1</a></li>
+                        <li><a href="#">link2</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x "></i></span> Shortcut</a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none;">
+                        <li><a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x "></i></span>link1</a></li>
+                        <li><a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-flag fa-stack-1x "></i></span>link2</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-cloud-download fa-stack-1x "></i></span>Overview</a>
+                </li>
+                <li>
+                    <a href="#"> <span class="fa-stack fa-lg pull-left"><i class="fa fa-cart-plus fa-stack-1x "></i></span>Events</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-youtube-play fa-stack-1x "></i></span>About</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-wrench fa-stack-1x "></i></span>Services</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa-stack fa-lg pull-left"><i class="fa fa-server fa-stack-1x "></i></span>Contact</a>
+                </li>
+            </ul>
+        </div><!-- /#sidebar-wrapper -->
+        <div id="mapDiv">
+
+        </div>
+    </div>
+
+
+    @RenderBody()
+
+    <div class="row">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+                    data-toggle="collapse" data-target="#example-navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+        </div>
+    </div>
+
+
+
+    @*<div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                    <p>&copy; @DateTime.Now.Year - DNIT ASP.NET Application</p>
+                </footer>
+        </div>*@
+
+</body>
+</html>

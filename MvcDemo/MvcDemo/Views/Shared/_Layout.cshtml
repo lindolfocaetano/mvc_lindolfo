@@ -1,13 +1,74 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>@ViewBag.Title</title>
+
+
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://js.arcgis.com/4.0/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    
+    <script type="text/javascript">
+    var djConfig = {
+        locale: "pt-br",
+        parseOnLoad: true,
+        async: false
+    };
+    </script>
+
+    <script src="https://js.arcgis.com/4.0/"></script>
+
+
+
+    @*Create Map*@
+    <script>
+        require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer",
+        "esri/layers/FeatureLayer",
+        "esri/PopupTemplate",
+        "dojo/domReady!",
+        
+        ], function (Map, MapView, MapImageLayer,FeatureLayer, PopupTemplate) {
+
+            var snv = new MapImageLayer({
+                url: "http://10.100.10.224:6080/arcgis/rest/services/DNIT_Geo/SNV/MapServer/"
+            });
+              
+            var map = new Map({
+                basemap: "topo",
+                layers: [snv]});
+
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                zoom: 6,
+                center: [-46, -16]
+
+            });
+            var featureLayer = new FeatureLayer({
+                url: "http://10.100.10.224:6080/arcgis/rest/services/DNIT_Geo/SNV/MapServer/8",
+                popupTemplate: new PopupTemplate({ title: "teste" })
+            });
+            
+        
+        });
+
+
+    </script>
+
+
 </head>
+
+
 <body>
+
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -17,25 +78,35 @@
                     <span class="icon-bar"></span>
                 </button>
                 @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("DNIT", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
+
                 </ul>
             </div>
         </div>
     </div>
-    <div class="container body-content">
+    <p></p>
+    <div class="container" style="height:100%; width:100%;position:page">
+        <div id="viewDiv" style="height:600px"> </div>
+    </div>
+
+
+    <div class="container">
         @RenderBody()
+
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - DNITGeo Application</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

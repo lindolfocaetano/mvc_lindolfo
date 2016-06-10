@@ -255,6 +255,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\img\DNIT %28122x32%29.png" />
     <Content Include="Content\img\DNITGeo 2016.png" />
+    <Content Include="Content\img\Layers-icon.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

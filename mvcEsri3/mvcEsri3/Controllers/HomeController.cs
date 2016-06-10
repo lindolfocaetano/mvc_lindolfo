@@ -10,7 +10,9 @@ namespace mvcEsri3.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "VGEO";
+            
+             
 
             return View();
         }

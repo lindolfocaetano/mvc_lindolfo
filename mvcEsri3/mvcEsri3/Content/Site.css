@@ -1,7 +1,6 @@
 ﻿body {
-    padding:1px 1px 1px 1px;
-    
-    height:93.5%;
+    padding: 1px 1px 1px 1px;
+    height: 93.5%;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -37,30 +36,29 @@ textarea {
     overflow: auto;
 }
 /* Toggle Styles */
- 
+
 #wrapper {
-    padding-top:5px;
+    padding-top: 5px;
     padding-left: 1px;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     overflow: hidden;
-    height:100%;
-    border-radius:5px;
-    
+    height: 100%;
+    border-radius: 5px;
 }
- 
-#wrapper.toggled {
-    padding-left: 250px;
-    overflow: scroll;
-}
+
+    #wrapper.toggled {
+        padding-left: 250px;
+        overflow: scroll;
+    }
 /* Aumenta a ára*/
 
- 
+
 #sidebar-wrapper {
     z-index: 1000;
-    position: absolute; 
+    position: absolute;
     left: 250px;
     width: 0;
     height: 92.5%;
@@ -71,37 +69,39 @@ textarea {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    border-radius:5px;
-    border:1px solid grey;
-
+    border-radius: 5px;
+    border: 1px solid grey;
 }
+
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
 }
- 
+
 #page-content-wrapper {
     position: absolute;
     padding: 15px;
-    width: 100%;  
-    overflow-x: hidden; 
+    width: 100%;
+    overflow-x: hidden;
 }
-.xyz{
+
+.xyz {
     min-width: 360px;
 }
+
 #wrapper.toggled #page-content-wrapper {
     position: relative;
-    margin-right: 0px; 
+    margin-right: 0px;
 }
-.fixed-brand{
+
+.fixed-brand {
     width: auto;
 }
 
-
 /* Sidebar Styles */
- 
+
 .sidebar-nav {
     position: absolute;
-    left:1px;
+    left: 1px;
     top: 0;
     width: 246px;
     margin: 0;
@@ -109,78 +109,85 @@ textarea {
     list-style: none;
     margin-top: 2px;
 }
- 
-.sidebar-nav li {
-    text-indent: 15px;
-    line-height: 40px;
+
+    .sidebar-nav li {
+        text-indent: 15px;
+        line-height: 40px;
+    }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+            .sidebar-nav li a:hover {
+                text-decoration: none;
+                color: #fff;
+                background: rgba(255,255,255,0.2);
+                border-left: red 2px solid;
+            }
+
+            .sidebar-nav li a:active,
+            .sidebar-nav li a:focus {
+                text-decoration: none;
+                padding: 0;
+            }
+
+    .sidebar-nav > .sidebar-brand {
+        height: 65px;
+        font-size: 18px;
+        line-height: 60px;
+    }
+
+        .sidebar-nav > .sidebar-brand a {
+            color: #999999;
+        }
+
+            .sidebar-nav > .sidebar-brand a:hover {
+                color: #fff;
+                background: none;
+            }
+
+.no-margin {
+    margin: 0;
 }
- 
-.sidebar-nav li a {
-    display: block;
-    text-decoration: none;
-    color: #999999;
-}
- 
-.sidebar-nav li a:hover {
-    text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
-    border-left: red 2px solid;
-}
- 
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-    text-decoration: none;
-}
- 
-.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
- 
-.sidebar-nav > .sidebar-brand a {
-    color: #999999;
-}
- 
-.sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
-    background: none;
-}
-.no-margin{
-    margin:0;
-}
- 
+
 @media(min-width:768px) {
     #wrapper {
         padding-left: 255px;
     }
-    .fixed-brand{
+
+    .fixed-brand {
         width: 250px;
     }
+
     #wrapper.toggled {
         padding-left: 0;
     }
- 
+
     #sidebar-wrapper {
         width: 252px;
     }
- 
+
     #wrapper.toggled #sidebar-wrapper {
         width: 252px;
     }
+
     #wrapper.toggled-2 #sidebar-wrapper {
         width: 50px;
     }
-    #wrapper.toggled-2 #sidebar-wrapper:hover {
-        width: 250px;
+
+        #wrapper.toggled-2 #sidebar-wrapper:hover {
+            width: 250px;
+        }
+
+    #wrapper.toggled-2 {
+        padding-left: 52px;
     }
-    #wrapper.toggled-2{
-    padding-left: 52px;
-   
-}
- 
- 
+
+
+
     #page-content-wrapper {
         padding: 200px;
         position: relative;
@@ -189,12 +196,13 @@ textarea {
         -o-transition: all 0.5s ease;
         transition: all 0.5s ease;
     }
- 
+
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
         padding-left: 250px;
     }
+
     #wrapper.toggled-2 #page-content-wrapper {
         position: relative;
         margin-right: 0;
@@ -204,15 +212,30 @@ textarea {
         -o-transition: all 0.5s ease;
         transition: all 0.5s ease;
         width: auto;
- 
+    }
+}
+
+@media(max-width:768px) {
+    #barra-brasil {
+        display: none;
     }
 }
 
 #mapDiv {
-    position:page;
+    position: page;
     margin: 1px;
     height: 99.5%;
     width: 99.7%;
-    border-radius:5px;
-    border:1px solid gray;
-  }
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+img.logoMenu {
+    left: 0;
+    position: absolute;
+    margin-left: 5px;
+    width: 35px
+}
+span.logoMenu{
+    margin-left:51px
+}

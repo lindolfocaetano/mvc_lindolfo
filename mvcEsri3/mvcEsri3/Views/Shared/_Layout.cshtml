@@ -59,16 +59,25 @@
         Legend,
         Scalebar) {
             var map;
-            var snv = "http://10.100.10.224:6080/arcgis/rest/services/DNIT_Geo/SNV/MapServer";
+            var snv = "http://servicos.dnit.gov.br/arcgis/rest/services/DNIT_Geo/SNV/MapServer";
             var camada = new ArcGISDynamicMapServiceLayer(snv, { id: 'snv', visible: true });
-            // code to create the map and add a basemap will go here
+             //code to create the map and add a basemap will go here
             map = new Map("mapDiv", {
                 center: [-46, -16],
                 zoom: 3,
                 basemap: "topo",
             });
+            var myLatlng = new google.maps.LatLng(-34.397, 150.644);
+            var mapOptions = {
+                zoom: 8,
+                center: myLatlng,
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+            var mapg = new google.maps.Map(document.getElementById("map"),
+                mapgOptions);
+            map.basemap = mapg;
             map.addLayer(camada)
-
+           
             var infoTemplate = new InfoTemplate("Attributes", "State Name: ${STATE_NAME}<br>Population: ${Pop2001}");
             
         });
@@ -201,5 +210,7 @@
         </div>*@
     <script src="http://barra.brasil.gov.br/barra.js" type="text/javascript" defer async></script>
     <script src="~/Scripts/sidebar_menu.js" type="text/javascript" defer async> </script>
+    <script src="https://maps.googleapis.com/maps/api/js"
+            async defer></script>
 </body>
 </html>

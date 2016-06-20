@@ -12,79 +12,310 @@
     <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/tundra/tundra.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/nihilo/nihilo.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/soria/soria.css">
-
+    <link href="~/Scripts/widget/css/InfoTemplateMap.css" rel="stylesheet" />
 
     <script src="~/Scripts/jquery-2.2.3.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 
+    <script src="~/Scripts/widget/jquery.twbsPagination.min.js"></script>
+    <script type="text/javascript">
+        var djConfig = {
+            locale: "pt-br",
+            parseOnLoad: false,
+            packages: [
+            {
+                name: 'dnit',
+                // location: ((location.pathname.replace(/\/[^/]+$/, '') + "/Scripts/js/dnit").replace("//", "/").replace("/Home", ""))
+                location: ((location.pathname + "/Scripts/").replace("//", "/").replace("/Home/Index", ""))
+            }], async: false
+        };
+        //global url do sistema
 
+
+    </script>
     <script src="https://js.arcgis.com/3.16/"></script>
-
-
 
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-
-
     <script>
+
         require([
-            "esri/map",
-            "esri/layers/ArcGISDynamicMapServiceLayer",
-            'esri/layers/WMSLayer',
-            'esri/layers/WMSLayerInfo',
-            'esri/geometry/Extent',
-            "esri/InfoTemplate",
-            'dojo/_base/array',
-            'dojo/dom',
-            'dojo/dom-construct',
-            'dojo/parser',
-            'dijit/layout/BorderContainer',
-            'dijit/layout/ContentPane',
-            'dojo/domReady!'
-
-
-        ], function (
+        "esri/map",
+        "esri/InfoTemplate",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/tasks/IdentifyTask",
+        "esri/tasks/IdentifyParameters",
+        "esri/dijit/Popup",
+        "dojo/_base/array",
+        "esri/Color",
+        "dojo/dom-construct",
+        "dojo/dom",
+        "dnit/widget/InfoTemplateMap",
+        "dojo/domReady!"
+        ],
+        function (
         Map,
-        ArcGISDynamicMapServiceLayer,
-        parser,
-        ready,
         InfoTemplate,
-        BorderContainer,
-        ContentPane,
+        ArcGISDynamicMapServiceLayer,
+        SimpleFillSymbol,
+        SimpleLineSymbol,
+        IdentifyTask,
+        IdentifyParameters,
+        Popup,
+        arrayUtils,
+        Color,
+        domConstruct,
         dom,
-        urlUtils,
-        arcgisUtils,
-        Legend,
-        Scalebar) {
+        InfoTemplateMap
+       ) {
+
+            var identifyTask, identifyParams;
+
+            var popup = new Popup({
+                fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                  new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+            }, domConstruct.create("div"));
+
+
             var map;
-            var snv = "http://servicos.dnit.gov.br/arcgis/rest/services/DNIT_Geo/SNV/MapServer";
+            var snv = "http://10.100.10.224:6080/arcgis/rest/services/DNIT_Geo/SNV/MapServer/";
             var camada = new ArcGISDynamicMapServiceLayer(snv, { id: 'snv', visible: true });
-             //code to create the map and add a basemap will go here
+            camada.setVisibleLayers([8, 9]);
+            // code to create the map and add a basemap will go here
             map = new Map("mapDiv", {
                 center: [-46, -16],
-                zoom: 3,
+                zoom: 6,
                 basemap: "topo",
             });
-            var myLatlng = new google.maps.LatLng(-34.397, 150.644);
-            var mapOptions = {
-                zoom: 8,
-                center: myLatlng,
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            };
-            var mapg = new google.maps.Map(document.getElementById("map"),
-                mapgOptions);
-            map.basemap = mapg;
             map.addLayer(camada)
-           
-            var infoTemplate = new InfoTemplate("Attributes", "State Name: ${STATE_NAME}<br>Population: ${Pop2001}");
-            
+            map.on("load", mapReady);
+
+            //var teste = new InfoTemplateMap({map:map}, dom.byId("qualquer"));
+            //teste.startup();
+            //map.on('click', function (event) { teste.setGeometry(event.mapPoint) });
+
+            function mapReady() {
+                map.on("click", executeIdentifyTask);
+                //create identify tasks and setup parameters
+                identifyTask = new IdentifyTask(snv);
+                identifyParams = new IdentifyParameters();
+                identifyParams.tolerance = 3;
+                identifyParams.returnGeometry = true;
+                identifyParams.layerIds = [8, 9];
+                identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+                identifyParams.width = map.width;
+                identifyParams.height = map.height;
+            }
+            var testeDivs = {};
+
+            function executeIdentifyTask(event) {
+
+                identifyParams.geometry = event.mapPoint;
+                identifyParams.mapExtent = map.extent;
+
+                var deferred = identifyTask
+                  .execute(identifyParams)
+                  .addCallback(function (response) {
+                      //var totalPages = response.length;
+                      //response is an array of identify result objects
+                      //Let's return an array of features.
+                      var teste = response;
+                      console.log(teste, 'response');
+                      var paginas = [];
+                      var layers = {};
+
+                      for (var i = 0; i < response.length; i++) {
+                          var result = response[i];
+                          var feature = result.feature;
+                          var layerName = result.layerName;
+                          var chaves = Object.keys(feature.attributes);
+
+                          var corpo = ""
+                          for (var ii = 0; ii < chaves.length; ii++) {
+                              classe = ""
+                              if (ii % 2 === 0) {
+                                  var classe = "active"
+                              }
+                              corpo += "<tr class="+classe+"> <td> " + chaves[ii] + "</td>";
+                              corpo += " <td> " + feature.attributes[chaves[ii]] + " </td> ";
+                              corpo += "</tr>";
+                          };
+                         
+
+                          if (layers[layerName] === undefined) {
+                              layers[layerName] = [];
+                              layers[layerName].push(corpo)
+                          }
+                          else {
+                              layers[layerName].push(corpo)
+                          };
+
+
+                      };
+                      var layersKeys = Object.keys(layers)
+                      var cabecalho = montaCabecalho(layersKeys, layersKeys.length);
+                      var divCamada = {}
+
+                      $("#myModal").modal();
+                      $("#modal-header").html(cabecalho);
+                      //var tamanho = layers[selectCab.value].length
+                      $('#modal-body').empty();
+
+                      for (var i = 0; i < layersKeys.length; i++) {
+                          var camada = layersKeys[i]
+
+                          var tamanho = layers[camada].length
+                          if (tamanho > 5) {
+                              var visiblePages = 5;
+                          }
+                          else {
+                              var visiblePages = tamanho;
+                          }
+
+                          var divName = camada.replace(/\s/g, "");
+                          divCamada[divName] = camada
+                          console.log(divName);
+                          var divCont = document.createElement('div');
+                          divCont.id = 'cont' + divName
+                          document.getElementById("modal-body").appendChild(divCont);
+                          var div = document.createElement('table');
+                          div.id = divName;
+                          div.className = "table"
+                          document.getElementById(divCont.id).appendChild(div);
+                          var div2 = document.createElement('ul');
+                          div2.id = 'pag' + divName;
+                          document.getElementById(divCont.id).appendChild(div2);
+
+
+
+                          $("#" + divCont.id).hide()
+                          $('#pag' + divName).twbsPagination({
+                              totalPages: tamanho,
+                              visiblePages: visiblePages,
+                              onPageClick: function (event, page) {
+                                  var id = event.currentTarget.id.replace("pag", "");
+                                  var nomeCamada = divCamada[id]
+                                  $('#' + id).html(layers[nomeCamada][parseInt(page) - 1])
+                                  //$('#' + divName).html(layers[selectCab.value][[parseInt(page) - 1]]);
+                              }
+
+                          });
+
+
+                      };
+
+                      demoDisplay('cont' + selectCab.value.replace(/\s/g, ""))
+
+                      $('#modal-header').on('change', function () {
+                          demoDisplay('cont' + selectCab.value.replace(/\s/g, ""))
+
+                      });
+
+                      function mudarPagina() {
+                          selectCab.value.replace(/\s/g, "").html(layers[selectCab.value][parseInt(page) - 1]);
+                      };
+
+
+                      $('#myModal').modal();
+                      $('.modal-backdrop').remove();
+                      $('#myModal').draggable({
+                          handle: ".modal-content"
+                      });
+                      
+
+
+
+                      return arrayUtils.map(response, function (result) {
+                          var feature = result.feature;
+                          var layerName = result.layerName;
+
+                          var Template = new InfoTemplate();
+
+                          var Template = new InfoTemplate();
+                          var chaves = Object.keys(feature.attributes);
+                          Template.setContent(montaTemplate);
+                          Template.setTitle(layerName);
+                          feature.setInfoTemplate(Template);
+                          var titulo = layerName;
+                          teste = "<h4 class=\"modal-title\">" + layerName + "</h4>";
+
+                          return feature;
+                      });
+
+                  });
+
+                map.infoWindow.setFeatures([deferred]);
+                map.infoWindow.show(map.mapPoint);
+
+
+            };
+
+            function demoDisplay(div) {
+                $("#" + div).show();
+                $("#modal-body").children().not("#" + div).hide()
+
+
+            }
+
+            function recriaPag(event, layers, page) {
+                $('#paginador').twbsPagination({
+                    totalPages: 5,
+                    visiblePages: 5,
+                    onPageClick: function (layers, page) {
+                        $('#page-pagination').html(layers[page]);
+                    }
+                });
+            };
+
+
+            function montaTemplate(graphic) {
+                var itens = Object.keys(graphic.attributes)
+                var teste = "";
+                for (var i = 0; i < itens.length; i++) {
+                    var item = itens[i];
+                    teste = teste + item + "; " + graphic.attributes[item] + "<br\>";
+                }
+                return teste;
+            }
+            function paginator(count) {
+
+                var html = "";
+                html += "<nav>";
+                html += "<ul class=\"pagination\" max-size=\"2\">";
+                html += "<li class=\"page-item\">";
+                html += "<a class=\"page-link\" href=\"#\" aria-label=\"Previous\">";
+                html += "<span aria-hidden=\"true\">&laquo;</span>";
+                html += "<span class=\"sr-only\">Previous</span>";
+                html += "</a>";
+                html += "</li>";
+                for (var i = 1; i <= count; i++) {
+                    html += "<li class=\"page-item\"><a class=\"page-link\" href=\"#\">" + i + "</a></li>";
+                }
+                html += "<li class=\"page-item\">";
+                html += "<a class=\"page-link\" href=\"#\" aria-label=\"Next\">";
+                html += "<span aria-hidden=\"true\">&raquo;</span>";
+                html += "<span class=\"sr-only\">Next</span>";
+                html += "</a> </li>  </ul> </nav>";
+                return html;
+            }
+
+            function montaCabecalho(layers, countCab) {
+                var html = "<select class=\"form-control\" id =\"selectCab\" >";
+                for (var i = 0; i < countCab; i++) {
+                    html += "<option> " + layers[i] + " </option>";
+                }
+                html += "</select>";
+                return html;
+            };
+
         });
 
     </script>
-
-
 
 </head>
 <body>
@@ -93,7 +324,19 @@
         <a href="http://brasil.gov.br" style="background:#7F7F7F; height: 20px; padding:4px 0 4px 10px; display: block; font-family:sans,sans-serif; text-decoration:none; color:white;">Portal do Governo Brasileiro</a>
     </div>
 
+    <div id="myModal" class="modal" role="dialog" style="width:50%;height:50%">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
 
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
     @*<div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -141,11 +384,11 @@
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav nav-pills nav-stacked" id="menu" style="padding:0;">
                 <li class="active">
-                        <a href="#">
-                            <img class="logoMenu" src="~/Content/img/Layers-icon.png"/>
-                            <span class="logoMenu">Camadas</span>
-                        </a>
-                    
+                    <a href="#">
+                        <img class="logoMenu" src="~/Content/img/Layers-icon.png" />
+                        <span class="logoMenu">Camadas</span>
+                    </a>
+
 
                     <ul class="nav-pills nav-stacked" style="list-style-type:none;">
                         <li><a href="#">link1</a></li>
@@ -210,7 +453,5 @@
         </div>*@
     <script src="http://barra.brasil.gov.br/barra.js" type="text/javascript" defer async></script>
     <script src="~/Scripts/sidebar_menu.js" type="text/javascript" defer async> </script>
-    <script src="https://maps.googleapis.com/maps/api/js"
-            async defer></script>
 </body>
 </html>

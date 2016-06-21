@@ -16,6 +16,7 @@
 
     <script src="~/Scripts/jquery-2.2.3.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <script src="~/Scripts/widget/jquery.twbsPagination.min.js"></script>
     <script type="text/javascript">
@@ -78,9 +79,14 @@
             var popup = new Popup({
                 fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
                   new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+                    new Color([255, 0, 0]), 2), new Color([0, 0, 0, 0.25]))
             }, domConstruct.create("div"));
 
+            if (Modernizr.draganddrop) {
+                
+            } else {
+                alert("Seu Navegador pode não ser compatível com totas as funcionalidades desta aplicação, favor atualize! Use preferencialmente o google Chrome!");
+            }
 
             var map;
             var snv = "http://servicos.dnit.gov.br/arcgis/rest/services/DNIT_Geo/SNV/MapServer/";
@@ -137,11 +143,8 @@
 
                           var corpo = ""
                           for (var ii = 0; ii < chaves.length; ii++) {
-                              classe = ""
-                              if (ii % 2 === 0) {
-                                  var classe = "active"
-                              }
-                              corpo += "<tr class="+classe+"> <td> " + chaves[ii] + "</td>";
+                            
+                              corpo += "<tr > <td> " + chaves[ii] + "</td>";
                               corpo += " <td> " + feature.attributes[chaves[ii]] + " </td> ";
                               corpo += "</tr>";
                           };
@@ -162,6 +165,7 @@
                       var divCamada = {}
 
                       $("#myModal").modal();
+                      
                       $("#modal-header").html(cabecalho);
                       //var tamanho = layers[selectCab.value].length
                       $('#modal-body').empty();
@@ -182,13 +186,15 @@
                           console.log(divName);
                           var divCont = document.createElement('div');
                           divCont.id = 'cont' + divName
+                          divCont.className = 'content-popup'
                           document.getElementById("modal-body").appendChild(divCont);
                           var div = document.createElement('table');
                           div.id = divName;
-                          div.className = "table"
+                          div.className = "table table-striped"
                           document.getElementById(divCont.id).appendChild(div);
                           var div2 = document.createElement('ul');
                           div2.id = 'pag' + divName;
+                          div2.className = 'pagination-sm'
                           document.getElementById(divCont.id).appendChild(div2);
 
 
@@ -201,7 +207,7 @@
                                   var id = event.currentTarget.id.replace("pag", "");
                                   var nomeCamada = divCamada[id]
                                   $('#' + id).html(layers[nomeCamada][parseInt(page) - 1])
-                                  //$('#' + divName).html(layers[selectCab.value][[parseInt(page) - 1]]);
+                                  
                               }
 
                           });
@@ -223,12 +229,12 @@
 
                       $('#myModal').modal();
                       $('.modal-backdrop').remove();
-                      //$('.modal-dialog').draggable({
-                      //    handle: ".modal-header"
-                      //});
                       $('#myModal').modal('show');
+                      $("#myModal").draggable({
+                          handle: ".modal-header"
+                      });
 
-
+                     
                       return arrayUtils.map(response, function (result) {
                           var feature = result.feature;
                           var layerName = result.layerName;
@@ -304,7 +310,7 @@
             }
 
             function montaCabecalho(layers, countCab) {
-                var html = "<select class=\"form-control\" id =\"selectCab\" >";
+                var html = "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> <select class=\"form-control\" id =\"selectCab\" >";
                 for (var i = 0; i < countCab; i++) {
                     html += "<option> " + layers[i] + " </option>";
                 }
@@ -313,6 +319,7 @@
             };
 
         });
+        
 
     </script>
 
@@ -323,20 +330,11 @@
         <a href="http://brasil.gov.br" style="background:#7F7F7F; height: 20px; padding:4px 0 4px 10px; display: block; font-family:sans,sans-serif; text-decoration:none; color:white;">Portal do Governo Brasileiro</a>
     </div>
 
-    <div id="myModal"  class="modal" tabindex="-1" role="dialog" style="width:50%;height:50%">
-        <div class="modal-dialog">
+    <div id="myModal"  class="modal" tabindex="-1" role="dialog" style="overflow:hidden; position:absolute;" draggable="true">
             <div class="modal-content">
-                <div class="modal-header" id="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
+                <div class="modal-header" id="modal-header"></div>
                 <div class="modal-body" id="modal-body"></div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
             </div><!-- /.modal-content -->
-        </div>
     </div>
     @*<div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
@@ -357,6 +355,28 @@
             </div>
         </div>
         <p></p>*@
+
+    <div id="myModal1" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Settings</h4>
+
+                </div>
+                <div class="modal-body">
+                    <p>Settings</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
 
     <nav class="navbar navbar-default no-margin" style="background:#9ED1F7;border:1px solid black;top:2px">
 
